@@ -84,6 +84,10 @@ int main ()
 // References:
 //
 //
+// game-loop:
+// https://github.com/misael-diaz/arena-Quake-III/blob/main/src/game/game.c
+//
+//
 // processing keyboard input:
 // references: https://stackoverflow.com/questions/20943322/accessing-keys-from-linux-input-device
 // https://www.kernel.org/doc/Documentation/input/input.txt
