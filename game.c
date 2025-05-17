@@ -9,6 +9,9 @@
 #include <string.h>
 #include <errno.h>
 
+#define KEY_RELEASED 0
+#define KEY_PRESSED  1
+
 int main ()
 {
 	// disables terminal input echoing
@@ -45,9 +48,15 @@ int main ()
 			exit(EXIT_FAILURE);
 		}
 		if (EV_KEY == evp->type) {
-			if (KEY_UP == evp->code && (0 == evp->value)) {
+			if (
+				(KEY_UP == evp->code) &&
+				(KEY_RELEASED == evp->value)
+			   ) {
 				fprintf(stdout, "%s\n", "main: key-up");
-			} else if ((KEY_DOWN == evp->code) && (0 == evp->value)) {
+			} else if (
+				(KEY_DOWN == evp->code) &&
+				(KEY_RELEASED == evp->value)
+				) {
 				fprintf(stdout, "%s\n", "main: key-down");
 			} else if (KEY_ESC == evp->code) {
 				fprintf(stdout, "%s\n", "main: key-esc");
@@ -62,9 +71,10 @@ int main ()
 	return 0;
 }
 
-// accessing keyboard input:
+// processing keyboard input:
 // references: https://stackoverflow.com/questions/20943322/accessing-keys-from-linux-input-device
 // https://www.kernel.org/doc/Documentation/input/input.txt
+// https://www.kernel.org/doc/html/v4.16/input/event-codes.html#ev-key
 //
 // disabling terminal input echoing
 // https://www.gnu.org/software/libc/manual/html_node/Low_002dLevel-Terminal-Interface.html
