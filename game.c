@@ -71,12 +71,16 @@ int main ()
 	return 0;
 }
 
+// References:
+//
+//
 // processing keyboard input:
 // references: https://stackoverflow.com/questions/20943322/accessing-keys-from-linux-input-device
 // https://www.kernel.org/doc/Documentation/input/input.txt
 // https://www.kernel.org/doc/html/v4.16/input/event-codes.html#ev-key
 //
-// disabling terminal input echoing
+//
+// disabling terminal input echoing:
 // https://www.gnu.org/software/libc/manual/html_node/Low_002dLevel-Terminal-Interface.html
 // https://www.gnu.org/software/libc/manual/html_node/getpass.html
 // also see `man tcsetattr` for info on `TCSAFLUSH`
