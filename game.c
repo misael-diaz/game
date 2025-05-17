@@ -51,3 +51,4 @@ int main ()
 }
 
 // references: https://stackoverflow.com/questions/20943322/accessing-keys-from-linux-input-device
+// https://www.kernel.org/doc/Documentation/input/input.txt
