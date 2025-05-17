@@ -58,6 +58,16 @@ int main ()
 				(KEY_RELEASED == evp->value)
 				) {
 				fprintf(stdout, "%s\n", "main: key-down");
+			} else if (
+				(KEY_LEFT == evp->code) &&
+				(KEY_RELEASED == evp->value)
+				) {
+				fprintf(stdout, "%s\n", "main: key-left");
+			} else if (
+				(KEY_RIGHT == evp->code) &&
+				(KEY_RELEASED == evp->value)
+				) {
+				fprintf(stdout, "%s\n", "main: key-right");
 			} else if (KEY_ESC == evp->code) {
 				fprintf(stdout, "%s\n", "main: key-esc");
 				fprintf(stdout, "%s\n", "main: quitting");
