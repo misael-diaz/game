@@ -12,6 +12,53 @@
 #define KEY_RELEASED 0
 #define KEY_PRESSED  1
 
+int handle_input(
+	int const fd,
+	struct termios * const terp,
+	struct input_event * const iep
+)
+{
+	errno = 0;
+	int rc = 0;
+	if (sizeof(*iep) != read(fd, iep, sizeof(*iep))) {
+		fprintf(stderr, "%s\n", "main: IOERR");
+		if (errno) {
+			fprintf(stderr, "main: reason: %s\n", strerror(errno));
+		}
+		close(fd);
+		tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
+		exit(EXIT_FAILURE);
+	}
+	if (EV_KEY == iep->type) {
+		if (
+				(KEY_UP == iep->code) &&
+				(KEY_RELEASED == iep->value)
+		   ) {
+			fprintf(stdout, "%s\n", "main: key-up");
+		} else if (
+				(KEY_DOWN == iep->code) &&
+				(KEY_RELEASED == iep->value)
+			  ) {
+			fprintf(stdout, "%s\n", "main: key-down");
+		} else if (
+				(KEY_LEFT == iep->code) &&
+				(KEY_RELEASED == iep->value)
+			  ) {
+			fprintf(stdout, "%s\n", "main: key-left");
+		} else if (
+				(KEY_RIGHT == iep->code) &&
+				(KEY_RELEASED == iep->value)
+			  ) {
+			fprintf(stdout, "%s\n", "main: key-right");
+		} else if (KEY_ESC == iep->code) {
+			fprintf(stdout, "%s\n", "main: key-esc");
+			fprintf(stdout, "%s\n", "main: quitting");
+			rc = 1;
+		}
+	}
+	return rc;
+}
+
 int main ()
 {
 	// disables terminal input echoing
@@ -37,42 +84,8 @@ int main ()
 	}
 
 	while (1) {
-		errno = 0;
-		if (sizeof(*evp) != read(fd, evp, sizeof(*evp))) {
-			fprintf(stderr, "%s\n", "main: IOERR");
-			if (errno) {
-				fprintf(stderr, "main: reason: %s\n", strerror(errno));
-			}
-			close(fd);
-			tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
-			exit(EXIT_FAILURE);
-		}
-		if (EV_KEY == evp->type) {
-			if (
-				(KEY_UP == evp->code) &&
-				(KEY_RELEASED == evp->value)
-			   ) {
-				fprintf(stdout, "%s\n", "main: key-up");
-			} else if (
-				(KEY_DOWN == evp->code) &&
-				(KEY_RELEASED == evp->value)
-				) {
-				fprintf(stdout, "%s\n", "main: key-down");
-			} else if (
-				(KEY_LEFT == evp->code) &&
-				(KEY_RELEASED == evp->value)
-				) {
-				fprintf(stdout, "%s\n", "main: key-left");
-			} else if (
-				(KEY_RIGHT == evp->code) &&
-				(KEY_RELEASED == evp->value)
-				) {
-				fprintf(stdout, "%s\n", "main: key-right");
-			} else if (KEY_ESC == evp->code) {
-				fprintf(stdout, "%s\n", "main: key-esc");
-				fprintf(stdout, "%s\n", "main: quitting");
-				break;
-			}
+		if (handle_input(fd, terp, evp)) {
+			break;
 		}
 	}
 
