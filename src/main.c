@@ -57,6 +57,8 @@ int delay(clockid_t const clockid)
 	return clock_nanosleep(clockid, flags, twp, NULL);
 }
 
+#if defined(DEBUG) && DEBUG
+
 int handle_input(
 	int const fd,
 	struct termios * const terp,
@@ -196,6 +198,138 @@ int handle_input(
 	}
 	return rc;
 }
+
+#else
+
+int handle_input(
+	int const fd,
+	struct termios * const terp,
+	struct input_event * const iep,
+	int * const kep
+)
+{
+	errno = 0;
+	int rc = 0;
+	int code = 0;
+	ssize_t bytes = 0;
+	int const key_up = KEY_UP;
+	int const key_down = KEY_DOWN;
+	int const key_left = KEY_LEFT;
+	int const key_right = KEY_RIGHT;
+	char buf[GAME_BUFFER_SZ];
+	char key_left_str[4]  = { 0x1b, 0x5b, 0x44, 0x00 };
+	char key_right_str[4] = { 0x1b, 0x5b, 0x43, 0x00 };
+	char key_up_str[4]    = { 0x1b, 0x5b, 0x41, 0x00 };
+	char key_down_str[4]  = { 0x1b, 0x5b, 0x42, 0x00 };
+	char key_esc_str[2]   = { 0x1b, 0x00 };
+
+	memset(buf, 0, GAME_BUFFER_SZ * sizeof(*buf));
+	if (KEY_PRESSED == *kep) {
+		code = iep->code;
+	} else {
+		bytes = read(STDIN_FILENO, buf, GAME_BUFFER_SZ * sizeof(*buf));
+		if (0 == bytes) {
+			return rc;
+		}
+		if (-1 == bytes) {
+			if (EAGAIN == errno) {
+				return rc;
+			}
+			fprintf(stderr, "%s\n", "main: IOERR");
+			if (errno) {
+				fprintf(stderr, "main: reason: %s\n", strerror(errno));
+			}
+			close(fd);
+			tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
+			exit(EXIT_FAILURE);
+		}
+
+		if (1 == bytes) {
+			buf[1] = 0;
+			if (!strncmp(key_esc_str, buf, sizeof(key_esc_str))) {
+				code = KEY_ESC;
+			} else {
+				return rc;
+			}
+		} else if (3 == bytes) {
+			buf[3] = 0;
+			if (!strncmp(key_left_str, buf, sizeof(key_left_str))) {
+				code = KEY_LEFT;
+			} else if (!strncmp(key_right_str, buf, sizeof(key_right_str))) {
+				code = KEY_RIGHT;
+			} else if (!strncmp(key_down_str, buf, sizeof(key_down_str))) {
+				code = KEY_DOWN;
+			} else if (!strncmp(key_up_str, buf, sizeof(key_up_str))) {
+				code = KEY_UP;
+			} else {
+				return rc;
+			}
+		} else {
+			return rc;
+		}
+	}
+
+	memset(iep, 0, sizeof(*iep));
+	do {
+		bytes = read(fd, iep, sizeof(*iep));
+		if (0 == bytes) {
+			return rc;
+		}
+		if (-1 == bytes) {
+			fprintf(stderr, "%s\n", "main: IOERR");
+			if (errno) {
+				fprintf(stderr, "main: reason: %s\n", strerror(errno));
+			}
+			close(fd);
+			tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
+			exit(EXIT_FAILURE);
+		} else if (sizeof(*iep) != bytes) {
+			fprintf(stderr, "%s\n", "main: IOERR");
+			if (errno) {
+				fprintf(stderr, "main: reason: %s\n", strerror(errno));
+			}
+			close(fd);
+			tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
+			exit(EXIT_FAILURE);
+		}
+	} while ((EV_KEY != iep->type) || (code != iep->code));
+
+	if ((key_up == iep->code)) {
+		if ((KEY_RELEASED == iep->value)) {
+			*kep = KEY_RELEASED;
+		} else {
+			*kep = KEY_PRESSED;
+		}
+	} else if (key_down == iep->code) {
+		if ((KEY_RELEASED == iep->value)) {
+			*kep = KEY_RELEASED;
+		} else {
+			*kep = KEY_PRESSED;
+		}
+	} else if (key_left == iep->code) {
+		if ((KEY_RELEASED == iep->value)) {
+			*kep = KEY_RELEASED;
+		} else {
+			*kep = KEY_PRESSED;
+		}
+	} else if (key_right == iep->code) {
+		if ((KEY_RELEASED == iep->value)) {
+			*kep = KEY_RELEASED;
+		} else {
+			*kep = KEY_PRESSED;
+		}
+	} else if (KEY_ESC == iep->code) {
+		if ((KEY_RELEASED == iep->value)) {
+			*kep = KEY_RELEASED;
+		} else {
+			*kep = KEY_PRESSED;
+		}
+		rc = 1;
+	}
+	return rc;
+}
+
+#endif
 
 int main ()
 {

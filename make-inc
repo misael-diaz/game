@@ -16,9 +16,10 @@
 CC = clang-12
 CC = gcc
 
-CCOPT = -std=gnu99\
-	 -g\
-	 -Wall\
-	 -Wextra\
-	 -Wformat\
-	 -O0
+CCOPT = -std=gnu99 \
+	-DDEBUG=0 \
+	-g \
+	-Wall \
+	-Wextra \
+	-Wformat \
+	-O0
