@@ -391,6 +391,7 @@ int main ()
 	}
 
 	close(fd);
+	close(framebuffer_fd);
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
 	return 0;
 clock_err:
