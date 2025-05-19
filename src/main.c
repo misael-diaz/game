@@ -19,7 +19,7 @@
 #define GAME_FRAMERATE_HZ 50.0
 #define GAME_PERIOD_NS ((long)((1.0e9 * (1.0 / GAME_FRAMERATE_HZ))))
 
-#define GAME_KEVBUF_SZ 256
+#define GAME_KEVBUF_SZ 16
 
 void draw(void * const map, struct fb_fix_screeninfo const * const ffsp)
 {
