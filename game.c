@@ -16,6 +16,8 @@
 #define GAME_FRAMERATE_HZ 50.0
 #define GAME_PERIOD_NS ((long)((1.0e9 * (1.0 / GAME_FRAMERATE_HZ))))
 
+#define GAME_BUFFER_SZ 256
+
 void draw(void)
 {
 	return;
@@ -55,59 +57,158 @@ int delay(clockid_t const clockid)
 int handle_input(
 	int const fd,
 	struct termios * const terp,
-	struct input_event * const iep
+	struct input_event * const iep,
+	int * const kep
 )
 {
 	errno = 0;
 	int rc = 0;
-	if (sizeof(*iep) != read(fd, iep, sizeof(*iep))) {
-		fprintf(stderr, "%s\n", "main: IOERR");
-		if (errno) {
-			fprintf(stderr, "main: reason: %s\n", strerror(errno));
+	int code = 0;
+	ssize_t bytes = 0;
+	int const key_up = KEY_UP;
+	int const key_down = KEY_DOWN;
+	int const key_left = KEY_LEFT;
+	int const key_right = KEY_RIGHT;
+	char buf[GAME_BUFFER_SZ];
+	char key_left_str[4]  = { 0x1b, 0x5b, 0x44, 0x00 };
+	char key_right_str[4] = { 0x1b, 0x5b, 0x43, 0x00 };
+	char key_up_str[4]    = { 0x1b, 0x5b, 0x41, 0x00 };
+	char key_down_str[4]  = { 0x1b, 0x5b, 0x42, 0x00 };
+	char key_esc_str[2]   = { 0x1b, 0x00 };
+
+	memset(buf, 0, GAME_BUFFER_SZ * sizeof(*buf));
+	if (KEY_PRESSED == *kep) {
+		code = iep->code;
+	} else {
+		bytes = read(STDIN_FILENO, buf, GAME_BUFFER_SZ * sizeof(*buf));
+		if (0 == bytes) {
+			return rc;
 		}
-		close(fd);
-		tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
-		exit(EXIT_FAILURE);
+		if (-1 == bytes) {
+			if (EAGAIN == errno) {
+				return rc;
+			}
+			fprintf(stderr, "%s\n", "main: IOERR");
+			if (errno) {
+				fprintf(stderr, "main: reason: %s\n", strerror(errno));
+			}
+			close(fd);
+			tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
+			exit(EXIT_FAILURE);
+		}
+
+		if (1 == bytes) {
+			buf[1] = 0;
+			if (!strncmp(key_esc_str, buf, sizeof(key_esc_str))) {
+				code = KEY_ESC;
+			} else {
+				return rc;
+			}
+		} else if (3 == bytes) {
+			buf[3] = 0;
+			if (!strncmp(key_left_str, buf, sizeof(key_left_str))) {
+				code = KEY_LEFT;
+			} else if (!strncmp(key_right_str, buf, sizeof(key_right_str))) {
+				code = KEY_RIGHT;
+			} else if (!strncmp(key_down_str, buf, sizeof(key_down_str))) {
+				code = KEY_DOWN;
+			} else if (!strncmp(key_up_str, buf, sizeof(key_up_str))) {
+				code = KEY_UP;
+			} else {
+				return rc;
+			}
+		} else {
+			return rc;
+		}
 	}
-	if (EV_KEY == iep->type) {
-		if (
-				(KEY_UP == iep->code) &&
-				(KEY_RELEASED == iep->value)
-		   ) {
-			fprintf(stdout, "%s\n", "main: key-up");
-		} else if (
-				(KEY_DOWN == iep->code) &&
-				(KEY_RELEASED == iep->value)
-			  ) {
-			fprintf(stdout, "%s\n", "main: key-down");
-		} else if (
-				(KEY_LEFT == iep->code) &&
-				(KEY_RELEASED == iep->value)
-			  ) {
-			fprintf(stdout, "%s\n", "main: key-left");
-		} else if (
-				(KEY_RIGHT == iep->code) &&
-				(KEY_RELEASED == iep->value)
-			  ) {
-			fprintf(stdout, "%s\n", "main: key-right");
-		} else if (KEY_ESC == iep->code) {
-			fprintf(stdout, "%s\n", "main: key-esc");
-			fprintf(stdout, "%s\n", "main: quitting");
-			rc = 1;
+
+	memset(iep, 0, sizeof(*iep));
+	do {
+		bytes = read(fd, iep, sizeof(*iep));
+		if (0 == bytes) {
+			return rc;
 		}
+		if (-1 == bytes) {
+			fprintf(stderr, "%s\n", "main: IOERR");
+			if (errno) {
+				fprintf(stderr, "main: reason: %s\n", strerror(errno));
+			}
+			close(fd);
+			tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
+			exit(EXIT_FAILURE);
+		} else if (sizeof(*iep) != bytes) {
+			fprintf(stderr, "%s\n", "main: IOERR");
+			if (errno) {
+				fprintf(stderr, "main: reason: %s\n", strerror(errno));
+			}
+			close(fd);
+			tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
+			exit(EXIT_FAILURE);
+		}
+	} while ((EV_KEY != iep->type) || (code != iep->code));
+
+	if ((key_up == iep->code)) {
+		if ((KEY_RELEASED == iep->value)) {
+			fprintf(stdout, "%s\n", "main: key-up released");
+			*kep = KEY_RELEASED;
+		} else {
+			fprintf(stdout, "%s\n", "main: key-up pressed");
+			*kep = KEY_PRESSED;
+		}
+	} else if (key_down == iep->code) {
+		if ((KEY_RELEASED == iep->value)) {
+			fprintf(stdout, "%s\n", "main: key-down released");
+			*kep = KEY_RELEASED;
+		} else {
+			fprintf(stdout, "%s\n", "main: key-down pressed");
+			*kep = KEY_PRESSED;
+		}
+	} else if (key_left == iep->code) {
+		if ((KEY_RELEASED == iep->value)) {
+			fprintf(stdout, "%s\n", "main: key-left released");
+			*kep = KEY_RELEASED;
+		} else {
+			fprintf(stdout, "%s\n", "main: key-left pressed");
+			*kep = KEY_PRESSED;
+		}
+	} else if (key_right == iep->code) {
+		if ((KEY_RELEASED == iep->value)) {
+			fprintf(stdout, "%s\n", "main: key-right released");
+			*kep = KEY_RELEASED;
+		} else {
+			fprintf(stdout, "%s\n", "main: key-right pressed");
+			*kep = KEY_PRESSED;
+		}
+	} else if (KEY_ESC == iep->code) {
+		if ((KEY_RELEASED == iep->value)) {
+			fprintf(stdout, "%s\n", "main: key-esc released");
+			fprintf(stdout, "%s\n", "main: quitting");
+			*kep = KEY_RELEASED;
+		} else {
+			fprintf(stdout, "%s\n", "main: key-esc pressed");
+			fprintf(stdout, "%s\n", "main: quitting");
+			*kep = KEY_PRESSED;
+		}
+		rc = 1;
 	}
 	return rc;
 }
 
 int main ()
 {
-	// disables terminal input echoing
+	// non-block stdin reads
+	int flags = fcntl(STDIN_FILENO, F_GETFD);
+	flags |= O_NONBLOCK;
+	fcntl(STDIN_FILENO, F_SETFD, flags);
+	// disables terminal input echoing and canonical mode
 	struct termios term = {};
 	struct termios *terp = &term;
 	tcgetattr(STDIN_FILENO, terp);
-	terp->c_lflag &= (~ECHO);
+	terp->c_lflag &= (~(ECHO | ICANON));
+	terp->c_cc[VMIN] = 0;
+	terp->c_cc[VTIME] = 0;
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
-	terp->c_lflag |= ECHO;
+	terp->c_lflag |= (ECHO | ICANON);
 
 	errno = 0;
 	int count = 0;
@@ -126,6 +227,8 @@ int main ()
 	}
 
 	count = 0;
+	int key_event = KEY_RELEASED;
+	int * const kep = &key_event;
 	struct timespec ts = {};
 	struct timespec te = {};
 	struct timespec *tsp = &ts;
@@ -135,7 +238,7 @@ int main ()
 		goto clock_err;
 	}
 	while (1) {
-		if (handle_input(fd, terp, evp)) {
+		if (handle_input(fd, terp, evp, kep)) {
 			break;
 		}
 		draw();
