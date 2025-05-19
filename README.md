@@ -18,7 +18,7 @@ but to learn more about low-level programming and GNU/Linux by trying to build a
 ## Compile
 
 ```
-gcc -Wall -O0 -g game.c -o game.bin
+make clean && make
 ```
 
 ## Execute
@@ -28,12 +28,7 @@ a permissions error when trying to open the keyboard device for reading. Not ide
 don't like this but that's what am doing for now to test it.
 
 ```
-./game.bin
+./bin/game.bin
 ```
 
-To quit the game simply press `Esc` key.
-
-## Notes
-
-If you try to run this code it's likely that it won't work unless you happen to have
-the same keyboard so you will have to modify the device name accordingly.
+To quit the game simply press the `Esc` key.
