@@ -1,4 +1,4 @@
-# Low-Level Game Development in GNU/Linux
+# Low-Level Game Dev in GNU/Linux
 I am exploring what it takes to build a game in GNU/Linux from scratch, no frameworks,
 just using the `cstdlib` and some facilities of the Linux Kernel for handling user input
 and for graphics display.
