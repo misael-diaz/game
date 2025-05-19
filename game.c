@@ -1,6 +1,8 @@
+#include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <linux/input.h>
+#include <linux/fb.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <termios.h>
@@ -210,6 +212,7 @@ int main ()
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
 	terp->c_lflag |= (ECHO | ICANON);
 
+
 	errno = 0;
 	int count = 0;
 	int const max_count = 64;
@@ -224,6 +227,62 @@ int main ()
 		}
 		tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
 		exit(EXIT_FAILURE);
+	}
+
+	errno = 0;
+	struct fb_fix_screeninfo ffs = {};
+	struct fb_fix_screeninfo * const ffsp = &ffs;
+	char const * const fbdev = "/dev/fb0";
+	int framebuffer_fd = open(fbdev, O_RDONLY);
+	if (-1 == framebuffer_fd || errno) {
+		fprintf(stderr, "%s\n", "main: IOERR");
+		if (errno) {
+			fprintf(stderr, "main: reason: %s\n", strerror(errno));
+		}
+		close(fd);
+		tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
+		exit(EXIT_FAILURE);
+	}
+
+	if (ioctl(framebuffer_fd, FBIOGET_FSCREENINFO, ffsp)) {
+		fprintf(stderr, "%s\n", "main: IOERR");
+		if (errno) {
+			fprintf(stderr, "main: reason: %s\n", strerror(errno));
+		}
+		close(fd);
+		close(framebuffer_fd);
+		tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
+		exit(EXIT_FAILURE);
+	}
+
+	switch (ffsp->visual) {
+		case FB_VISUAL_MONO01:
+			fprintf(stdout, "%s\n", "main: visual: VisualMono01");
+			break;
+		case FB_VISUAL_MONO10:
+			fprintf(stdout, "%s\n", "main: visual: VisualMono10");
+			break;
+		case FB_VISUAL_TRUECOLOR:
+			fprintf(stdout, "%s\n", "main: visual: VisualTrueColor");
+			break;
+		case FB_VISUAL_PSEUDOCOLOR:
+			fprintf(stdout, "%s\n", "main: visual: VisualPseudoColor");
+			break;
+		case FB_VISUAL_DIRECTCOLOR:
+			fprintf(stdout, "%s\n", "main: visual: VisualDirectColor");
+			break;
+		case FB_VISUAL_STATIC_PSEUDOCOLOR:
+			fprintf(stdout, "%s\n", "main: visual: VisualStaticPseudoColor");
+			break;
+		case FB_VISUAL_FOURCC:
+			fprintf(stdout, "%s\n", "main: visual: VisualFourcc");
+			break;
+		default:
+			fprintf(stdout, "%s\n", "main: visual: UnknownVisual");
+			close(fd);
+			close(framebuffer_fd);
+			tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
+			exit(EXIT_FAILURE);
 	}
 
 	count = 0;
@@ -291,6 +350,10 @@ clock_err:
 // https://www.gnu.org/software/libc/manual/html_node/getpass.html
 // also see `man tcsetattr` for info on `TCSAFLUSH`
 // https://stackoverflow.com/questions/59922972/how-to-stop-echo-in-terminal-using-c/59923166#59923166
+//
+//
+// framebuffer:
+// https://www.kernel.org/doc/html/v5.4/fb/api.html
 
 /*
 
