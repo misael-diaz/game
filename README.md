@@ -1,5 +1,15 @@
-# game
-experimenting building a game in Linux from scratch
+# Low-Level Game Development in GNU/Linux
+I am exploring what it takes to build a game in GNU/Linux from scratch, no frameworks,
+just using the `cstdlib` and some facilities of the Linux Kernel for handling user input
+and for graphics display.
+
+Not trying to reinvent a framework here so if your hardware does not match mine this code
+will not work in your machine. At this point I do not know how far I will be able to
+progress, this is a repository for learning. I am just writing code based on the Linux
+Kernel documentation, GLIBC documentation, the Linux man pages, and some stackoverflow
+posts. I am adding references to the source code to keep track of the resources that
+I have found to be most useful to me. In the end, what I want is not to build a game
+but to learn more about low-level programming and GNU/Linux by trying to build a game.
 
 ## Compile
 
