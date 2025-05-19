@@ -285,6 +285,35 @@ int main ()
 			exit(EXIT_FAILURE);
 	}
 
+	switch (ffsp->type) {
+		case FB_TYPE_PACKED_PIXELS:
+			fprintf(stdout, "%s\n", "main: type: PackedPixelsFrameBuffer");
+			break;
+		case FB_TYPE_PLANES:
+			fprintf(stdout, "%s\n", "main: type: PlanesFrameBuffer");
+			break;
+		case FB_TYPE_INTERLEAVED_PLANES:
+			fprintf(stdout,
+				"%s\n",
+				"main: type: InverleavedPlanesFrameBuffer");
+			break;
+		case FB_TYPE_TEXT:
+			fprintf(stdout, "%s\n", "main: type: TextFrameBuffer");
+			break;
+		case FB_TYPE_VGA_PLANES:
+			fprintf(stdout, "%s\n", "main: type: VGAPlanesFrameBuffer");
+			break;
+		case FB_TYPE_FOURCC:
+			fprintf(stdout, "%s\n", "main: type: FourccFrameBuffer");
+			break;
+		default:
+			fprintf(stdout, "%s\n", "main: type: UnknownTypeFrameBuffer");
+			close(fd);
+			close(framebuffer_fd);
+			tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
+			exit(EXIT_FAILURE);
+	}
+
 	count = 0;
 	int key_event = KEY_RELEASED;
 	int * const kep = &key_event;
