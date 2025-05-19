@@ -19,7 +19,7 @@
 #define GAME_FRAMERATE_HZ 50.0
 #define GAME_PERIOD_NS ((long)((1.0e9 * (1.0 / GAME_FRAMERATE_HZ))))
 
-#define GAME_BUFFER_SZ 256
+#define GAME_KEVBUF_SZ 256
 
 void draw(void * const map, struct fb_fix_screeninfo const * const ffsp)
 {
@@ -74,18 +74,18 @@ int handle_input(
 	int const key_down = KEY_DOWN;
 	int const key_left = KEY_LEFT;
 	int const key_right = KEY_RIGHT;
-	char buf[GAME_BUFFER_SZ];
+	char buf[GAME_KEVBUF_SZ];
 	char key_left_str[4]  = { 0x1b, 0x5b, 0x44, 0x00 };
 	char key_right_str[4] = { 0x1b, 0x5b, 0x43, 0x00 };
 	char key_up_str[4]    = { 0x1b, 0x5b, 0x41, 0x00 };
 	char key_down_str[4]  = { 0x1b, 0x5b, 0x42, 0x00 };
 	char key_esc_str[2]   = { 0x1b, 0x00 };
 
-	memset(buf, 0, GAME_BUFFER_SZ * sizeof(*buf));
+	memset(buf, 0, GAME_KEVBUF_SZ * sizeof(*buf));
 	if (KEY_PRESSED == *kep) {
 		code = iep->code;
 	} else {
-		bytes = read(STDIN_FILENO, buf, GAME_BUFFER_SZ * sizeof(*buf));
+		bytes = read(STDIN_FILENO, buf, GAME_KEVBUF_SZ * sizeof(*buf));
 		if (0 == bytes) {
 			return rc;
 		}
@@ -216,18 +216,18 @@ int handle_input(
 	int const key_down = KEY_DOWN;
 	int const key_left = KEY_LEFT;
 	int const key_right = KEY_RIGHT;
-	char buf[GAME_BUFFER_SZ];
+	char buf[GAME_KEVBUF_SZ];
 	char key_left_str[4]  = { 0x1b, 0x5b, 0x44, 0x00 };
 	char key_right_str[4] = { 0x1b, 0x5b, 0x43, 0x00 };
 	char key_up_str[4]    = { 0x1b, 0x5b, 0x41, 0x00 };
 	char key_down_str[4]  = { 0x1b, 0x5b, 0x42, 0x00 };
 	char key_esc_str[2]   = { 0x1b, 0x00 };
 
-	memset(buf, 0, GAME_BUFFER_SZ * sizeof(*buf));
+	memset(buf, 0, GAME_KEVBUF_SZ * sizeof(*buf));
 	if (KEY_PRESSED == *kep) {
 		code = iep->code;
 	} else {
-		bytes = read(STDIN_FILENO, buf, GAME_BUFFER_SZ * sizeof(*buf));
+		bytes = read(STDIN_FILENO, buf, GAME_KEVBUF_SZ * sizeof(*buf));
 		if (0 == bytes) {
 			return rc;
 		}
