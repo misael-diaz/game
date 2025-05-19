@@ -1,6 +1,7 @@
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 #include <linux/input.h>
 #include <linux/fb.h>
 #include <fcntl.h>
@@ -20,9 +21,9 @@
 
 #define GAME_BUFFER_SZ 256
 
-void draw(void)
+void draw(void * const map, struct fb_fix_screeninfo const * const ffsp)
 {
-	return;
+	memset(map, 0, ffsp->smem_len);
 }
 
 double etime (
@@ -235,7 +236,7 @@ int main ()
 	struct fb_fix_screeninfo * const ffsp = &ffs;
 	struct fb_var_screeninfo * const fvsp = &fvs;
 	char const * const fbdev = "/dev/fb0";
-	int framebuffer_fd = open(fbdev, O_RDONLY);
+	int framebuffer_fd = open(fbdev, O_RDWR);
 	if (-1 == framebuffer_fd || errno) {
 		fprintf(stderr, "%s\n", "main: IOERR");
 		if (errno) {
@@ -329,6 +330,13 @@ int main ()
 
 	fprintf(stdout, "main: line-length: %d\n", ffsp->line_length);
 	fprintf(stdout, "main: bits-per-pixel: %d\n", fvsp->bits_per_pixel);
+	fprintf(stdout, "main: height mm: %d\n", fvsp->height);
+	fprintf(stdout, "main: width mm: %d\n", fvsp->width);
+	fprintf(stdout, "main: xres: %d\n", fvsp->xres);
+	fprintf(stdout, "main: yres: %d\n", fvsp->yres);
+	fprintf(stdout, "main: xoffset: %d\n", fvsp->xoffset);
+	fprintf(stdout, "main: yoffset: %d\n", fvsp->yoffset);
+	fprintf(stdout, "main: nonstd: %d\n", fvsp->nonstd);
 
 	fprintf(stdout,
 		"main: red: offset: %d length: %d MSB: %d\n",
@@ -358,6 +366,22 @@ int main ()
 			break;
 	}
 
+	errno = 0;
+	void *map = mmap(NULL,
+			ffsp->smem_len,
+			PROT_READ | PROT_WRITE,
+			MAP_SHARED,
+			framebuffer_fd,
+			0);
+	if (errno) {
+		fprintf(stdout, "%s\n", "main: ERROR");
+		fprintf(stderr, "main: reason: %s\n", strerror(errno));
+		close(fd);
+		close(framebuffer_fd);
+		tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
+		exit(EXIT_FAILURE);
+	}
+
 	count = 0;
 	int key_event = KEY_RELEASED;
 	int * const kep = &key_event;
@@ -373,7 +397,7 @@ int main ()
 		if (handle_input(fd, terp, evp, kep)) {
 			break;
 		}
-		draw();
+		draw(map, ffsp);
 		errno = 0;
 		if (delay(clockid)) {
 			goto clock_err;
@@ -393,6 +417,12 @@ int main ()
 	close(fd);
 	close(framebuffer_fd);
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
+	errno = 0;
+	if (munmap(map, ffsp->smem_len)) {
+		fprintf(stderr, "%s\n", "main: ERROR");
+		fprintf(stderr, "main: reason: %s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
 	return 0;
 clock_err:
 	{
@@ -428,6 +458,7 @@ clock_err:
 //
 // framebuffer:
 // https://www.kernel.org/doc/html/v5.4/fb/api.html
+// https://kevinboone.me/linuxfbc.html
 
 /*
 
