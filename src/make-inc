@@ -1,0 +1,20 @@
+#
+# gnu-linux-game-dev					May 19, 2025
+#
+# source: src/make-inc
+# author: @misael-diaz
+#
+# Synopsis:
+# Defines the include file for building the program with GNU make.
+#
+# Copyright (c) 2025 Misael Diaz-Maldonado
+#
+# This file is released under the GNU General Public License version 2 only
+# as published by the Free Software Foundation.
+#
+
+MAIN_SRC = main.c
+
+MAIN_OBJ = ../obj/main.o
+
+BIN = ../bin/game.bin
