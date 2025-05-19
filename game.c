@@ -231,7 +231,9 @@ int main ()
 
 	errno = 0;
 	struct fb_fix_screeninfo ffs = {};
+	struct fb_var_screeninfo fvs = {};
 	struct fb_fix_screeninfo * const ffsp = &ffs;
+	struct fb_var_screeninfo * const fvsp = &fvs;
 	char const * const fbdev = "/dev/fb0";
 	int framebuffer_fd = open(fbdev, O_RDONLY);
 	if (-1 == framebuffer_fd || errno) {
@@ -245,6 +247,17 @@ int main ()
 	}
 
 	if (ioctl(framebuffer_fd, FBIOGET_FSCREENINFO, ffsp)) {
+		fprintf(stderr, "%s\n", "main: IOERR");
+		if (errno) {
+			fprintf(stderr, "main: reason: %s\n", strerror(errno));
+		}
+		close(fd);
+		close(framebuffer_fd);
+		tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
+		exit(EXIT_FAILURE);
+	}
+
+	if (ioctl(framebuffer_fd, FBIOGET_VSCREENINFO, fvsp)) {
 		fprintf(stderr, "%s\n", "main: IOERR");
 		if (errno) {
 			fprintf(stderr, "main: reason: %s\n", strerror(errno));
@@ -312,6 +325,37 @@ int main ()
 			close(framebuffer_fd);
 			tcsetattr(STDIN_FILENO, TCSAFLUSH, terp);
 			exit(EXIT_FAILURE);
+	}
+
+	fprintf(stdout, "main: line-length: %d\n", ffsp->line_length);
+	fprintf(stdout, "main: bits-per-pixel: %d\n", fvsp->bits_per_pixel);
+
+	fprintf(stdout,
+		"main: red: offset: %d length: %d MSB: %d\n",
+		fvsp->red.offset,
+		fvsp->red.length,
+		fvsp->red.msb_right);
+	fprintf(stdout,
+		"main: green: offset: %d length: %d MSB: %d\n",
+		fvsp->green.offset,
+		fvsp->green.length,
+		fvsp->green.msb_right);
+	fprintf(stdout,
+		"main: blue: offset: %d length: %d MSB: %d\n",
+		fvsp->blue.offset,
+		fvsp->blue.length,
+		fvsp->blue.msb_right);
+
+	switch (fvsp->grayscale) {
+		case 0:
+			fprintf(stdout, "%s\n", "main: color: Color");
+			break;
+		case 1:
+			fprintf(stdout, "%s\n", "main: color: Grayscale");
+			break;
+		default:
+			fprintf(stdout, "%s\n", "main: color: Fourcc");
+			break;
 	}
 
 	count = 0;
