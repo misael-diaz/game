@@ -186,10 +186,36 @@ void vid_munmap_fb(
 
 void vid_write_fb(
 		void ** const map,
-		struct fb_fix_screeninfo const * const ffsp
+		struct fb_fix_screeninfo const * const ffsp,
+		struct fb_var_screeninfo const * const fvsp
 )
 {
+	unsigned char const red = 0;
+	unsigned char const green = 0;
+	unsigned char const blue = 255;
+	unsigned char const alpha = 0;
+	int const length = 128;
+	int const bytes_per_pixel = (fvsp->bits_per_pixel >> 3);
+	int const bpp = bytes_per_pixel;
+	int const num_pixels = (ffsp->smem_len / bpp);
+	int const num_pixels_x = fvsp->xres;
+	int const num_pixels_y = fvsp->yres;
+	int const xbeg = (num_pixels_x >> 1) - (length >> 1);
+	int const ybeg = (num_pixels_y >> 1) - (length >> 1);
+	int const xend = (xbeg + length);
+	int const yend = (ybeg + length);
+	struct rgba * const pix = *map;
 	memset(*map, 0, ffsp->smem_len);
+	// draws our player
+	for (int y = ybeg; y != yend; ++y) {
+		for (int x = xbeg; x != xend; ++x) {
+			int const of = (num_pixels_x * y + x);
+			pix[of].blue = blue;
+			pix[of].green = green;
+			pix[of].red = red;
+			pix[of].alpha = alpha;
+		}
+	}
 }
 
 /*

@@ -38,6 +38,7 @@ int main ()
 	g_loop(
 			&map,
 			ffsp,
+			fvsp,
 			keyboard_fd
 	);
 	close(keyboard_fd);

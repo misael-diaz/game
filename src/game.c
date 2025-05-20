@@ -10,6 +10,7 @@
 void g_loop (
 		void ** const map,
 		struct fb_fix_screeninfo const * const ffsp,
+		struct fb_var_screeninfo const * const fvsp,
 		int const keyboard_fd
 )
 {
@@ -34,7 +35,8 @@ void g_loop (
 	while (1) {
 		vid_write_fb(
 				map,
-				ffsp
+				ffsp,
+				fvsp
 		);
 		if (
 			in_handle_input(

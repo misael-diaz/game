@@ -3,6 +3,13 @@
 
 #include <linux/fb.h>
 
+struct rgba {
+	unsigned char blue;
+	unsigned char green;
+	unsigned char red;
+	unsigned char alpha;
+};
+
 int vid_open_fb(
 		char const * const fbdev
 );
@@ -31,7 +38,8 @@ void vid_munmap_fb(
 
 void vid_write_fb(
 		void ** const map,
-		struct fb_fix_screeninfo const * const ffsp
+		struct fb_fix_screeninfo const * const ffsp,
+		struct fb_var_screeninfo const * const fvsp
 );
 
 #endif
