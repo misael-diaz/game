@@ -1,10 +1,8 @@
 #ifndef LLGLGD_GAME_H
 #define LLGLGD_GAME_H
 
+#include "gmdefs.h"
 #include "entity.h"
-
-#define GAME_FRAMERATE_HZ 30.0
-#define GAME_PERIOD_NS ((long)((1.0e9 * (1.0 / GAME_FRAMERATE_HZ))))
 
 void g_loop (
 		void ** const map,

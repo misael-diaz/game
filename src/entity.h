@@ -2,6 +2,7 @@
 #define LLGLGD_ENTITY_H
 
 #include <linux/fb.h>
+#include "gmdefs.h"
 
 #define EN_NUM_ENTITY_MAX 5
 #define EN_GAMER_LEN 128
@@ -19,10 +20,16 @@
 #define EN_ENEMY_GREEN 0
 #define EN_ENEMY_RED 255
 
+#define EN_GAMER_DAMAGED_ALPHA 0
+#define EN_GAMER_DAMAGED_BLUE 128
+#define EN_GAMER_DAMAGED_GREEN 128
+#define EN_GAMER_DAMAGED_RED 128
+
 #define EN_ENEMY_HP 20
 #define EN_GAMER_HP 100
 
 #define EN_COLLISION_DAMAGE 20
+#define EN_COLLISION_IGNORE ((int) (4.0 * GAME_FRAMERATE_HZ))
 
 enum entag {
 	EN_GAMER,
@@ -32,6 +39,8 @@ enum entag {
 
 struct entity {
 	enum entag tag;
+	int invisibility;
+	int ticks;
 	int xpos;
 	int ypos;
 	int xvel;

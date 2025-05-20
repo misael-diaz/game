@@ -1,7 +1,7 @@
 #ifndef LLGLGD_GAME_DEFS_H
 #define LLGLGD_GAME_DEFS_H
 
-#define GAME_FRAMERATE_HZ 30.0
+#define GAME_FRAMERATE_HZ 60.0
 #define GAME_PERIOD_NS ((long)((1.0e9 * (1.0 / GAME_FRAMERATE_HZ))))
 
 #endif

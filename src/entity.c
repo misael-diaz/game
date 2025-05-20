@@ -25,6 +25,8 @@ void en_init(
 		struct entity * const ent = &entities[i];
 		if (0 == i) {
 			ent->tag = EN_GAMER;
+			ent->invisibility = 0;
+			ent->ticks = 0;
 			ent->xpos = ((xres >> 1) - (gamer_len >> 1));
 			ent->ypos = ((yres >> 1) - (gamer_len >> 1));
 			ent->xvel = 0;
@@ -41,6 +43,8 @@ void en_init(
 			ent->hp = EN_GAMER_HP;
 		} else {
 			ent->tag = EN_ENEMY;
+			ent->invisibility = 0;
+			ent->ticks = 0;
 			ent->xpos = random() - (RAND_MAX >> 1);
 			ent->ypos = random() - (RAND_MAX >> 1);
 			ent->xvel = ((i & 1)? (-EN_ENEMY_VEL): EN_ENEMY_VEL);
@@ -115,7 +119,15 @@ void en_handle_collisions(
 	for (int i = 1; i != num_entities; ++i) {
 		struct entity const * const enemy = &entities[i];
 		if (en_check_collision(gamer, enemy)) {
-			gamer->hp -= EN_COLLISION_DAMAGE;
+			if (!gamer->invisibility) {
+				gamer->hp -= EN_COLLISION_DAMAGE;
+				gamer->blue  = EN_GAMER_DAMAGED_BLUE;
+				gamer->green = EN_GAMER_DAMAGED_GREEN;
+				gamer->red   = EN_GAMER_DAMAGED_RED;
+				gamer->alpha = EN_GAMER_DAMAGED_ALPHA;
+				gamer->invisibility = 1;
+				gamer->ticks = 0;
+			}
 		}
 	}
 	if (0 > gamer->hp) {
@@ -142,6 +154,20 @@ void en_update(
 			}
 			if ((ent->ymin == ent->ypos) || (ent->ymax == ent->ypos)) {
 				ent->yvel = -ent->yvel;
+			}
+		}
+		if (EN_GAMER == ent->tag) {
+			if (ent->invisibility) {
+				if (EN_COLLISION_IGNORE == ent->ticks) {
+					ent->blue  = EN_GAMER_BLUE;
+					ent->green = EN_GAMER_GREEN;
+					ent->red   = EN_GAMER_RED;
+					ent->alpha = EN_GAMER_ALPHA;
+					ent->invisibility = 0;
+					ent->ticks = 0;
+				} else {
+					ent->ticks++;
+				}
 			}
 		}
 	}
