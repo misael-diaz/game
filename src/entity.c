@@ -159,19 +159,22 @@ void en_handle_collisions(
 	struct entity * const hud = &entities[EN_HUD_ID];
 	struct entity * const gamer = &entities[EN_GAMER_ID];
 	for (int i = 1; i != num_entities; ++i) {
-		struct entity const * const enemy = &entities[i];
-		if (en_check_collision(gamer, enemy)) {
-			if (!gamer->invisibility) {
-				hud->hp -= EN_COLLISION_DAMAGE;
-				hud->len -= EN_HUD_DAMAGE;
-				hud->width -= EN_HUD_DAMAGE;
-				gamer->hp -= EN_COLLISION_DAMAGE;
-				gamer->blue  = EN_GAMER_DAMAGED_BLUE;
-				gamer->green = EN_GAMER_DAMAGED_GREEN;
-				gamer->red   = EN_GAMER_DAMAGED_RED;
-				gamer->alpha = EN_GAMER_DAMAGED_ALPHA;
-				gamer->invisibility = 1;
-				gamer->ticks = 0;
+		struct entity const * const other = &entities[i];
+		if (EN_ENEMY == other->tag) {
+			struct entity const * const enemy = other;
+			if (en_check_collision(gamer, enemy)) {
+				if (!gamer->invisibility) {
+					hud->hp -= EN_COLLISION_DAMAGE;
+					hud->len -= EN_HUD_DAMAGE;
+					hud->width -= EN_HUD_DAMAGE;
+					gamer->hp -= EN_COLLISION_DAMAGE;
+					gamer->blue  = EN_GAMER_DAMAGED_BLUE;
+					gamer->green = EN_GAMER_DAMAGED_GREEN;
+					gamer->red   = EN_GAMER_DAMAGED_RED;
+					gamer->alpha = EN_GAMER_DAMAGED_ALPHA;
+					gamer->invisibility = 1;
+					gamer->ticks = 0;
+				}
 			}
 		}
 	}
