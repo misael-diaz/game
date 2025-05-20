@@ -9,7 +9,7 @@
 
 void g_loop (
 		void ** const map,
-		struct fb_fix_screeninfo const * const ffsp, 
+		struct fb_fix_screeninfo const * const ffsp,
 		int const keyboard_fd
 )
 {
