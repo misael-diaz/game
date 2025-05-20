@@ -21,9 +21,34 @@ void en_init(
 	int const yres = fvsp->yres;
 	int const gamer_len = EN_GAMER_LEN;
 	int const enemy_len = EN_ENEMY_LEN;
+	int const hud_len = EN_HUD_LEN;
+	int const hud_width = EN_HUD_WIDTH;
+	int const hud_height = EN_HUD_HEIGHT;
+	int const hud_xpos = EN_HUD_XPOS;
+	int const hud_ypos = EN_HUD_YPOS;
 	for (int i = 0; i != num_entities; ++i) {
 		struct entity * const ent = &entities[i];
-		if (0 == i) {
+		if (EN_HUD_ID == i) {
+			ent->tag = EN_HUD;
+			ent->invisibility = 0;
+			ent->ticks = 0;
+			ent->xpos = (hud_xpos - (hud_width >> 1));
+			ent->ypos = (hud_ypos - (hud_height >> 1));
+			ent->xvel = 0;
+			ent->yvel = 0;
+			ent->xmin = 0;
+			ent->ymin = 0;
+			ent->xmax = (xres - hud_width);
+			ent->ymax = (yres - hud_height);
+			ent->blue  = EN_HUD_BLUE;
+			ent->green = EN_HUD_GREEN;
+			ent->red   = EN_HUD_RED;
+			ent->alpha = EN_HUD_ALPHA;
+			ent->len = hud_len;
+			ent->width = hud_width;
+			ent->height = hud_height;
+			ent->hp = EN_HUD_HP;
+		} else if (EN_GAMER_ID == i) {
 			ent->tag = EN_GAMER;
 			ent->invisibility = 0;
 			ent->ticks = 0;
@@ -40,6 +65,8 @@ void en_init(
 			ent->red   = EN_GAMER_RED;
 			ent->alpha = EN_GAMER_ALPHA;
 			ent->len = gamer_len;
+			ent->width = gamer_len;
+			ent->height = gamer_len;
 			ent->hp = EN_GAMER_HP;
 		} else {
 			ent->tag = EN_ENEMY;
@@ -58,6 +85,8 @@ void en_init(
 			ent->red   = EN_ENEMY_RED;
 			ent->alpha = EN_ENEMY_ALPHA;
 			ent->len = enemy_len;
+			ent->width = enemy_len;
+			ent->height = enemy_len;
 			ent->hp = EN_ENEMY_HP;
 		}
 		ent->xpos = ((ent->xmin > ent->xpos)? ent->xmin : ent->xpos);
@@ -115,11 +144,15 @@ void en_handle_collisions(
 		int const num_entities
 )
 {
-	struct entity * const gamer = &entities[0];
+	struct entity * const hud = &entities[EN_HUD_ID];
+	struct entity * const gamer = &entities[EN_GAMER_ID];
 	for (int i = 1; i != num_entities; ++i) {
 		struct entity const * const enemy = &entities[i];
 		if (en_check_collision(gamer, enemy)) {
 			if (!gamer->invisibility) {
+				hud->hp -= EN_COLLISION_DAMAGE;
+				hud->len -= EN_HUD_DAMAGE;
+				hud->width -= EN_HUD_DAMAGE;
 				gamer->hp -= EN_COLLISION_DAMAGE;
 				gamer->blue  = EN_GAMER_DAMAGED_BLUE;
 				gamer->green = EN_GAMER_DAMAGED_GREEN;

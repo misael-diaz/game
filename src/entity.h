@@ -4,11 +4,28 @@
 #include <linux/fb.h>
 #include "gmdefs.h"
 
-#define EN_NUM_ENTITY_MAX 5
+#define EN_NUM_ENTITY_MAX 6
+#define EN_HUD_ID 0
+#define EN_GAMER_ID 1
+
+/* DEV: if you change the HUD LEN you must also change the HUD DAMAGE accordingly */
+
 #define EN_GAMER_LEN 128
 #define EN_ENEMY_LEN 64
+#define EN_HUD_LEN 200
+#define EN_HUD_WIDTH EN_HUD_LEN
+#define EN_HUD_HEIGHT 32
+
+#define EN_HUD_XPOS (EN_HUD_HEIGHT + (EN_HUD_WIDTH  >> 1))
+#define EN_HUD_YPOS (EN_HUD_HEIGHT + (EN_HUD_HEIGHT >> 1))
+
 #define EN_GAMER_VEL 16
 #define EN_ENEMY_VEL 16
+
+#define EN_HUD_ALPHA 0
+#define EN_HUD_BLUE 0
+#define EN_HUD_GREEN 128
+#define EN_HUD_RED 0
 
 #define EN_GAMER_ALPHA 0
 #define EN_GAMER_BLUE 255
@@ -25,13 +42,18 @@
 #define EN_GAMER_DAMAGED_GREEN 128
 #define EN_GAMER_DAMAGED_RED 128
 
+#define EN_HUD_HP 100
 #define EN_ENEMY_HP 20
 #define EN_GAMER_HP 100
 
+/* DEV: if you change the collision damage you must adjust the settings for the HUD */
+
+#define EN_HUD_DAMAGE 40
 #define EN_COLLISION_DAMAGE 20
 #define EN_COLLISION_IGNORE ((int) (4.0 * GAME_FRAMERATE_HZ))
 
 enum entag {
+	EN_HUD,
 	EN_GAMER,
 	EN_ENEMY,
 	EN_NTAGS
@@ -54,6 +76,8 @@ struct entity {
 	int red;
 	int alpha;
 	int len;
+	int width;
+	int height;
 	int hp;
 };
 

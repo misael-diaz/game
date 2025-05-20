@@ -192,6 +192,10 @@ void vid_write_fb(
 		int const num_entities
 )
 {
+	int xbeg = 0;
+	int xend = 0;
+	int ybeg = 0;
+	int yend = 0;
 	int const bytes_per_pixel = (fvsp->bits_per_pixel >> 3);
 	int const bpp = bytes_per_pixel;
 	int const num_pixels = (ffsp->smem_len / bpp);
@@ -201,10 +205,17 @@ void vid_write_fb(
 	memset(*map, 0, ffsp->smem_len);
 	for (int i = 0; i != num_entities; ++i) {
 		struct entity const * const ent = &entities[i];
-		int const xbeg = ent->xpos;
-		int const xend = ent->xpos + ent->len;
-		int const ybeg = ent->ypos;
-		int const yend = ent->ypos + ent->len;
+		if (EN_HUD == ent->tag) {
+			xbeg = ent->xpos;
+			xend = ent->xpos + ent->width;
+			ybeg = ent->ypos;
+			yend = ent->ypos + ent->height;
+		} else {
+			xbeg = ent->xpos;
+			xend = ent->xpos + ent->len;
+			ybeg = ent->ypos;
+			yend = ent->ypos + ent->len;
+		}
 		for (int y = ybeg; y != yend; ++y) {
 			for (int x = xbeg; x != xend; ++x) {
 				int const of = (num_pixels_x * y + x);

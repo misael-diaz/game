@@ -31,7 +31,7 @@ int in_handle_input(
 	char key_up_str[4]    = { 0x1b, 0x5b, 0x41, 0x00 };
 	char key_down_str[4]  = { 0x1b, 0x5b, 0x42, 0x00 };
 	char key_esc_str[2]   = { 0x1b, 0x00 };
-	struct entity * const gamer = &entities[0];
+	struct entity * const gamer = &entities[EN_GAMER_ID];
 
 	memset(buf, 0, IN_BUFSIZE_KEV * sizeof(*buf));
 	if (IN_PRESSED_KEV == *kep) {
