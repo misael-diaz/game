@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <linux/fb.h>
+#include <time.h>
 #include "entity.h"
 
 void en_init(
@@ -17,6 +18,12 @@ void en_init(
 		fprintf(stderr, "%s\n", "en_init: NullEntityArrayError");
 		_Exit(EXIT_FAILURE);
 	}
+	long const t = time(NULL);
+	long const mask = ((1L << 32) - 1L);
+	long const lo = (t & mask);
+	long const hi = ((t >> 32) & mask);
+	unsigned int const seed = (hi ^ lo);
+	unsigned int const s = (seed)? seed : (mask >> 1);
 	int const xres = fvsp->xres;
 	int const yres = fvsp->yres;
 	int const gamer_len = EN_GAMER_LEN;
@@ -26,6 +33,7 @@ void en_init(
 	int const hud_height = EN_HUD_HEIGHT;
 	int const hud_xpos = EN_HUD_XPOS;
 	int const hud_ypos = EN_HUD_YPOS;
+	srandom(s);
 	for (int i = 0; i != num_entities; ++i) {
 		struct entity * const ent = &entities[i];
 		if (EN_HUD_ID == i) {
@@ -72,8 +80,12 @@ void en_init(
 			ent->tag = EN_ENEMY;
 			ent->invisibility = 0;
 			ent->ticks = 0;
-			ent->xpos = random() - (RAND_MAX >> 1);
-			ent->ypos = random() - (RAND_MAX >> 1);
+			ent->xpos = xres * (
+				((double) (random() - (RAND_MAX >> 1))) / RAND_MAX
+			);
+			ent->ypos = yres * (
+				((double) (random() - (RAND_MAX >> 1))) / RAND_MAX
+			);
 			ent->xvel = ((i & 1)? (-EN_ENEMY_VEL): EN_ENEMY_VEL);
 			ent->yvel = ((i & 1)? (-EN_ENEMY_VEL): EN_ENEMY_VEL);
 			ent->xmin = 0;
