@@ -78,7 +78,7 @@ int in_handle_input(
 			gamer->yvel = 0;
 		} else {
 			*kep = IN_PRESSED_KEV;
-			gamer->yvel = -EN_GAMER_VEL;
+			gamer->yvel = -EN_GAMER_YVEL;
 		}
 	} else if (key_down == iep->code) {
 		if ((IN_RELEASE_KEV == iep->value)) {
@@ -86,7 +86,7 @@ int in_handle_input(
 			gamer->yvel = 0;
 		} else {
 			*kep = IN_PRESSED_KEV;
-			gamer->yvel = EN_GAMER_VEL;
+			gamer->yvel = EN_GAMER_YVEL;
 		}
 	} else if (key_left == iep->code) {
 		if ((IN_RELEASE_KEV == iep->value)) {
@@ -94,7 +94,7 @@ int in_handle_input(
 			gamer->xvel = 0;
 		} else {
 			*kep = IN_PRESSED_KEV;
-			gamer->xvel = -EN_GAMER_VEL;
+			gamer->xvel = -EN_GAMER_XVEL;
 		}
 	} else if (key_right == iep->code) {
 		if ((IN_RELEASE_KEV == iep->value)) {
@@ -102,7 +102,7 @@ int in_handle_input(
 			gamer->xvel = 0;
 		} else {
 			*kep = IN_PRESSED_KEV;
-			gamer->xvel = EN_GAMER_VEL;
+			gamer->xvel = EN_GAMER_XVEL;
 		}
 	} else if (KEY_ESC == iep->code) {
 		if ((IN_RELEASE_KEV == iep->value)) {

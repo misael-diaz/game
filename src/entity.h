@@ -20,6 +20,8 @@
 #define EN_HUD_YPOS (EN_HUD_HEIGHT + (EN_HUD_HEIGHT >> 1))
 
 #define EN_GAMER_VEL 16
+#define EN_GAMER_XVEL EN_GAMER_VEL
+#define EN_GAMER_YVEL (EN_GAMER_VEL << 1)
 #define EN_ENEMY_VEL 16
 
 #define EN_HUD_ALPHA 0
