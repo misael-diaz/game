@@ -2,6 +2,7 @@
 #define LLGLGD_VIDEO_H
 
 #include <linux/fb.h>
+#include "entity.h"
 
 struct rgba {
 	unsigned char blue;
@@ -39,7 +40,9 @@ void vid_munmap_fb(
 void vid_write_fb(
 		void ** const map,
 		struct fb_fix_screeninfo const * const ffsp,
-		struct fb_var_screeninfo const * const fvsp
+		struct fb_var_screeninfo const * const fvsp,
+		struct entity const * const entities,
+		int const num_entities
 );
 
 #endif

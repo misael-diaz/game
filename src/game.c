@@ -5,12 +5,15 @@
 #include "system.h"
 #include "input.h"
 #include "video.h"
+#include "entity.h"
 #include "game.h"
 
 void g_loop (
 		void ** const map,
 		struct fb_fix_screeninfo const * const ffsp,
 		struct fb_var_screeninfo const * const fvsp,
+		struct entity * const entities,
+		int const num_entities,
 		int const keyboard_fd
 )
 {
@@ -36,7 +39,9 @@ void g_loop (
 		vid_write_fb(
 				map,
 				ffsp,
-				fvsp
+				fvsp,
+				entities,
+				num_entities
 		);
 		if (
 			in_handle_input(

@@ -3,11 +3,13 @@
 #include <termios.h>
 #include "input.h"
 #include "video.h"
+#include "entity.h"
 #include "game.h"
 
 int main ()
 {
 	void *map = NULL;
+	struct entity ents[EN_NUM_ENTITY_MAX] = {};
 	struct termios term = {};
 	struct termios * const tp = &term;
 	struct fb_fix_screeninfo ffs = {};
@@ -18,6 +20,7 @@ int main ()
 	char const * const kbdev = (
 			"/dev/input/by-id/usb-Dell_Dell_QuietKey_Keyboard-event-kbd"
 	);
+	int num_entities = EN_NUM_ENTITY_MAX;
 	int framebuffer_fd = vid_open_fb(fbdev);
 	int keyboard_fd = in_open_kb(kbdev);
 	vid_getinfo_fb(
@@ -34,11 +37,18 @@ int main ()
 			ffsp,
 			framebuffer_fd
 	);
+	en_init(
+			ents,
+			fvsp,
+			num_entities
+	);
 	init_term(tp);
 	g_loop(
 			&map,
 			ffsp,
 			fvsp,
+			ents,
+			num_entities,
 			keyboard_fd
 	);
 	close(keyboard_fd);

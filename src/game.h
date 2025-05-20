@@ -1,6 +1,8 @@
 #ifndef LLGLGD_GAME_H
 #define LLGLGD_GAME_H
 
+#include "entity.h"
+
 #define GAME_FRAMERATE_HZ 30.0
 #define GAME_PERIOD_NS ((long)((1.0e9 * (1.0 / GAME_FRAMERATE_HZ))))
 
@@ -8,6 +10,8 @@ void g_loop (
 		void ** const map,
 		struct fb_fix_screeninfo const * const ffsp,
 		struct fb_var_screeninfo const * const fvsp,
+		struct entity * const entities,
+		int const num_entities,
 		int const keyboard_fd
 );
 

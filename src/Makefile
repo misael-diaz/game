@@ -18,6 +18,10 @@ include make-inc
 
 all: $(BIN)
 
+$(ENTITY_OBJ): \
+	$(ENTITY_H) \
+	$(ENTITY_SRC)
+	$(CC) $(CCOPT) -c $(ENTITY_SRC) -o $(ENTITY_OBJ)
 $(SYSTEM_OBJ): \
 	$(GMDEFS_H) \
 	$(SYSTEM_H) \
@@ -36,6 +40,7 @@ $(GAME_OBJ): \
 	$(INPUT_H) \
 	$(VIDEO_H) \
 	$(GAME_H) \
+	$(ENTITY_OBJ) \
 	$(SYSTEM_OBJ) \
 	$(INPUT_OBJ) \
 	$(VIDEO_OBJ) \
@@ -45,6 +50,7 @@ $(MAIN_OBJ): \
 	$(INPUT_H) \
 	$(VIDEO_H) \
 	$(GAME_H) \
+	$(ENTITY_OBJ) \
 	$(SYSTEM_OBJ) \
 	$(INPUT_OBJ) \
 	$(VIDEO_OBJ) \
@@ -53,6 +59,7 @@ $(MAIN_OBJ): \
 	$(CC) $(CCOPT) -c $(MAIN_SRC) -o $(MAIN_OBJ)
 $(BIN): $(MAIN_OBJ)
 	$(CC) $(CCOPT) \
+		$(ENTITY_OBJ) \
 		$(SYSTEM_OBJ) \
 		$(INPUT_OBJ) \
 		$(VIDEO_OBJ) \
