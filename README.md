@@ -42,7 +42,6 @@ mode to play this game.
 ## Game Controls
 
 Use the keyboard arrow keys to move the player to try to avoid collisions with the
-enemies (we have yet to add collision detection between entities).
+enemies.
 
 To quit the game simply press the `Esc` key.
-
