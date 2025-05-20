@@ -31,4 +31,10 @@ don't like this but that's what am doing for now to test it.
 ./bin/game.bin
 ```
 
+## Game Controls
+
+Use the keyboard arrow keys to move the player to try to avoid collisions with the
+enemies (we have yet to add collision detection between entities).
+
 To quit the game simply press the `Esc` key.
+
