@@ -28,10 +28,12 @@ $(SYSTEM_OBJ): \
 	$(SYSTEM_SRC)
 	$(CC) $(CCOPT) -c $(SYSTEM_SRC) -o $(SYSTEM_OBJ)
 $(INPUT_OBJ): \
+	$(ENTITY_H) \
 	$(INPUT_H) \
 	$(INPUT_SRC)
 	$(CC) $(CCOPT) -c $(INPUT_SRC) -o $(INPUT_OBJ)
 $(VIDEO_OBJ): \
+	$(ENTITY_H) \
 	$(VIDEO_H) \
 	$(VIDEO_SRC)
 	$(CC) $(CCOPT) -c $(VIDEO_SRC) -o $(VIDEO_OBJ)
@@ -40,10 +42,6 @@ $(GAME_OBJ): \
 	$(INPUT_H) \
 	$(VIDEO_H) \
 	$(GAME_H) \
-	$(ENTITY_OBJ) \
-	$(SYSTEM_OBJ) \
-	$(INPUT_OBJ) \
-	$(VIDEO_OBJ) \
 	$(GAME_SRC)
 	$(CC) $(CCOPT) -c $(GAME_SRC) -o $(GAME_OBJ)
 $(MAIN_OBJ): \
