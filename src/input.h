@@ -3,6 +3,7 @@
 
 #include <linux/input.h>
 #include <termios.h>
+#include "entity.h"
 
 #define IN_RELEASE_KEV 0
 #define IN_PRESSED_KEV 1
@@ -11,6 +12,7 @@
 int in_handle_input(
 		int * const kep,
 		struct input_event * const iep,
+		struct entity * const entities,
 		int const fd
 );
 

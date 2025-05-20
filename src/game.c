@@ -53,6 +53,7 @@ void g_loop (
 			in_handle_input(
 					kep,
 					iep,
+					entities,
 					keyboard_fd
 			)
 		) {

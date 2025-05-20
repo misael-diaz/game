@@ -13,6 +13,7 @@
 int in_handle_input(
 		int * const kep,
 		struct input_event * const iep,
+		struct entity * const entities,
 		int const fd
 )
 {
@@ -30,6 +31,7 @@ int in_handle_input(
 	char key_up_str[4]    = { 0x1b, 0x5b, 0x41, 0x00 };
 	char key_down_str[4]  = { 0x1b, 0x5b, 0x42, 0x00 };
 	char key_esc_str[2]   = { 0x1b, 0x00 };
+	struct entity * const gamer = &entities[0];
 
 	memset(buf, 0, IN_BUFSIZE_KEV * sizeof(*buf));
 	if (IN_PRESSED_KEV == *kep) {
@@ -73,26 +75,34 @@ int in_handle_input(
 	if ((key_up == iep->code)) {
 		if ((IN_RELEASE_KEV == iep->value)) {
 			*kep = IN_RELEASE_KEV;
+			gamer->yvel = 0;
 		} else {
 			*kep = IN_PRESSED_KEV;
+			gamer->yvel = -EN_GAMER_VEL;
 		}
 	} else if (key_down == iep->code) {
 		if ((IN_RELEASE_KEV == iep->value)) {
 			*kep = IN_RELEASE_KEV;
+			gamer->yvel = 0;
 		} else {
 			*kep = IN_PRESSED_KEV;
+			gamer->yvel = EN_GAMER_VEL;
 		}
 	} else if (key_left == iep->code) {
 		if ((IN_RELEASE_KEV == iep->value)) {
 			*kep = IN_RELEASE_KEV;
+			gamer->xvel = 0;
 		} else {
 			*kep = IN_PRESSED_KEV;
+			gamer->xvel = -EN_GAMER_VEL;
 		}
 	} else if (key_right == iep->code) {
 		if ((IN_RELEASE_KEV == iep->value)) {
 			*kep = IN_RELEASE_KEV;
+			gamer->xvel = 0;
 		} else {
 			*kep = IN_PRESSED_KEV;
+			gamer->xvel = EN_GAMER_VEL;
 		}
 	} else if (KEY_ESC == iep->code) {
 		if ((IN_RELEASE_KEV == iep->value)) {
