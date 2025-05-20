@@ -18,11 +18,45 @@ include make-inc
 
 all: $(BIN)
 
+$(SYSTEM_OBJ): \
+	$(GMDEFS_H) \
+	$(SYSTEM_H) \
+	$(SYSTEM_SRC)
+	$(CC) $(CCOPT) -c $(SYSTEM_SRC) -o $(SYSTEM_OBJ)
+$(INPUT_OBJ): \
+	$(INPUT_H) \
+	$(INPUT_SRC)
+	$(CC) $(CCOPT) -c $(INPUT_SRC) -o $(INPUT_OBJ)
+$(VIDEO_OBJ): \
+	$(VIDEO_H) \
+	$(VIDEO_SRC)
+	$(CC) $(CCOPT) -c $(VIDEO_SRC) -o $(VIDEO_OBJ)
+$(GAME_OBJ): \
+	$(SYSTEM_H) \
+	$(INPUT_H) \
+	$(VIDEO_H) \
+	$(GAME_H) \
+	$(SYSTEM_OBJ) \
+	$(INPUT_OBJ) \
+	$(VIDEO_OBJ) \
+	$(GAME_SRC)
+	$(CC) $(CCOPT) -c $(GAME_SRC) -o $(GAME_OBJ)
 $(MAIN_OBJ): \
+	$(INPUT_H) \
+	$(VIDEO_H) \
+	$(GAME_H) \
+	$(SYSTEM_OBJ) \
+	$(INPUT_OBJ) \
+	$(VIDEO_OBJ) \
+	$(GAME_OBJ) \
 	$(MAIN_SRC)
 	$(CC) $(CCOPT) -c $(MAIN_SRC) -o $(MAIN_OBJ)
 $(BIN): $(MAIN_OBJ)
 	$(CC) $(CCOPT) \
+		$(SYSTEM_OBJ) \
+		$(INPUT_OBJ) \
+		$(VIDEO_OBJ) \
+		$(GAME_OBJ) \
 		$(MAIN_OBJ) \
 		-o \
 		$(BIN)
