@@ -4,7 +4,7 @@
 #include <linux/fb.h>
 #include "gmdefs.h"
 
-#define EN_NUM_ENTITY_MAX 6
+#define EN_NUM_ENTITY_MAX 15
 #define EN_HUD_ID 0
 #define EN_GAMER_ID 1
 
