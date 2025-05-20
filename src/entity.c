@@ -124,10 +124,10 @@ static double en_sqdist (
 		struct entity const * const other
 )
 {
-	double const x1 = entity->xpos;
-	double const y1 = entity->ypos;
-	double const x2 = other->xpos;
-	double const y2 = other->ypos;
+	double const x1 = entity->xpos + entity->width;
+	double const y1 = entity->ypos + entity->height;
+	double const x2 = other->xpos + other->width;
+	double const y2 = other->ypos + other->height;
 	double const r2 = (
 			(x2 - x1) * (x2 - x1) +
 			(y2 - y1) * (y2 - y1)
