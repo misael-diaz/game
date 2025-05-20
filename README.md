@@ -31,6 +31,14 @@ don't like this but that's what am doing for now to test it.
 ./bin/game.bin
 ```
 
+## EPILEPSY WARNING
+
+The game screen will **flicker** so if you know that you or a relative has this condition
+do not play this game. We have yet to implement a buffer strategy to mitigate this issue.
+All in all even if you try to run this in your Linux machine the executable shouldn't
+produce images unless you are in plain console mode. You will have to switch to console
+mode to play this game.
+
 ## Game Controls
 
 Use the keyboard arrow keys to move the player to try to avoid collisions with the
