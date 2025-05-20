@@ -18,7 +18,10 @@ void g_loop (
 )
 {
 	double etime = 0;
+	int num_ticks = 0;
 	int count = 0;
+	double game_etime = 0;
+	double game_period = (1.0 / GAME_FRAMERATE_HZ);
 	int const max_count = 256;
 	double const max_count_f64 = max_count;
 	int key_event = IN_RELEASE_KEV;
@@ -27,6 +30,8 @@ void g_loop (
 	struct timespec te = {};
 	struct timespec *tsp = &ts;
 	struct timespec *tep = &te;
+	struct timespec time_game_reference = {};
+	struct timespec time_game_current = {};
 	struct input_event ie = {};
 	struct input_event * const iep = &ie;
 	clockid_t const clockid = CLOCK_MONOTONIC;
@@ -35,6 +40,7 @@ void g_loop (
 			clockid,
 			tsp
 	);
+	time_game_reference = *tsp;
 	while (1) {
 		vid_write_fb(
 				map,
@@ -52,6 +58,24 @@ void g_loop (
 		) {
 			break;
 		}
+
+		clock_gettime(
+				clockid,
+				&time_game_current
+		);
+		game_etime += sys_etime(
+				&time_game_current,
+				&time_game_reference
+		);
+		num_ticks = ((int) (game_etime * GAME_FRAMERATE_HZ));
+		for (int i = 0; i != num_ticks; ++i) {
+			en_update(entities, num_entities);
+			game_etime -= game_period;
+		}
+		if (num_ticks) {
+			time_game_reference = time_game_current;
+		}
+
 		sys_delay(cip);
 		++count;
 		if (max_count == count) {

@@ -6,7 +6,8 @@
 #define EN_NUM_ENTITY_MAX 5
 #define EN_GAMER_LEN 128
 #define EN_ENEMY_LEN 64
-#define EN_ENEMY_VEL 8
+#define EN_GAMER_VEL 8
+#define EN_ENEMY_VEL 16
 
 #define EN_GAMER_ALPHA 0
 #define EN_GAMER_BLUE 255
