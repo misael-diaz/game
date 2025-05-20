@@ -75,10 +75,10 @@ void en_update(
 		ent->ypos = ((ent->ymin > ent->ypos)? ent->ymin : ent->ypos);
 		ent->ypos = ((ent->ymax < ent->ypos)? ent->ymax : ent->ypos);
 		if (EN_ENEMY == ent->tag) {
-			if ((ent->xmin == ent->xpos) || (ent->xmin == ent->xpos)) {
+			if ((ent->xmin == ent->xpos) || (ent->xmax == ent->xpos)) {
 				ent->xvel = -ent->xvel;
 			}
-			if ((ent->ymin == ent->ypos) || (ent->ymin == ent->ypos)) {
+			if ((ent->ymin == ent->ypos) || (ent->ymax == ent->ypos)) {
 				ent->yvel = -ent->yvel;
 			}
 		}
