@@ -34,6 +34,7 @@ void g_loop (
 	struct timespec time_game_current = {};
 	struct input_event ie = {};
 	struct input_event * const iep = &ie;
+	struct entity * const gamer = &entities[0];
 	clockid_t const clockid = CLOCK_MONOTONIC;
 	clockid_t const * const cip = &clockid;
 	clock_gettime(
@@ -57,6 +58,16 @@ void g_loop (
 					keyboard_fd
 			)
 		) {
+			break;
+		}
+
+		en_handle_collisions(
+				entities,
+				num_entities
+		);
+
+		if (!gamer->hp) {
+			fprintf(stdout, "%s\n", "game: GAME OVER");
 			break;
 		}
 

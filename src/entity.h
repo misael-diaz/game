@@ -19,6 +19,11 @@
 #define EN_ENEMY_GREEN 0
 #define EN_ENEMY_RED 255
 
+#define EN_ENEMY_HP 20
+#define EN_GAMER_HP 100
+
+#define EN_COLLISION_DAMAGE 20
+
 enum entag {
 	EN_GAMER,
 	EN_ENEMY,
@@ -40,6 +45,7 @@ struct entity {
 	int red;
 	int alpha;
 	int len;
+	int hp;
 };
 
 void en_init(
@@ -51,6 +57,11 @@ void en_init(
 void en_update(
 		struct entity * const entities,
 		int num_entities
+);
+
+void en_handle_collisions(
+		struct entity * const entities,
+		int const num_entities
 );
 
 #endif

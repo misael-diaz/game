@@ -38,6 +38,7 @@ void en_init(
 			ent->red   = EN_GAMER_RED;
 			ent->alpha = EN_GAMER_ALPHA;
 			ent->len = gamer_len;
+			ent->hp = EN_GAMER_HP;
 		} else {
 			ent->tag = EN_ENEMY;
 			ent->xpos = random() - (RAND_MAX >> 1);
@@ -53,11 +54,72 @@ void en_init(
 			ent->red   = EN_ENEMY_RED;
 			ent->alpha = EN_ENEMY_ALPHA;
 			ent->len = enemy_len;
+			ent->hp = EN_ENEMY_HP;
 		}
 		ent->xpos = ((ent->xmin > ent->xpos)? ent->xmin : ent->xpos);
 		ent->xpos = ((ent->xmax < ent->xpos)? ent->xmax : ent->xpos);
 		ent->ypos = ((ent->ymin > ent->ypos)? ent->ymin : ent->ypos);
 		ent->ypos = ((ent->ymax < ent->ypos)? ent->ymax : ent->ypos);
+	}
+}
+
+// returns the squared contact-distance between a pair of entities
+static double en_contact2 (
+		struct entity const * const entity,
+		struct entity const * const other
+)
+{
+	double const contact = (0.5 * (entity->len + other->len));
+	return (contact * contact);
+}
+
+// returns the squared contact distance
+static double en_sqdist (
+		struct entity const * const entity,
+		struct entity const * const other
+)
+{
+	double const x1 = entity->xpos;
+	double const y1 = entity->ypos;
+	double const x2 = other->xpos;
+	double const y2 = other->ypos;
+	double const r2 = (
+			(x2 - x1) * (x2 - x1) +
+			(y2 - y1) * (y2 - y1)
+	);
+	return r2;
+}
+
+// returns one if the entities overlap, zero otherwise
+static int en_check_collision(
+		struct entity const * const entity,
+		struct entity const * const other
+)
+{
+	if (entity == other) {
+		return 0;
+	}
+	if (en_contact2(entity, other) >= en_sqdist(entity, other)) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+void en_handle_collisions(
+		struct entity * const entities,
+		int const num_entities
+)
+{
+	struct entity * const gamer = &entities[0];
+	for (int i = 1; i != num_entities; ++i) {
+		struct entity const * const enemy = &entities[i];
+		if (en_check_collision(gamer, enemy)) {
+			gamer->hp -= EN_COLLISION_DAMAGE;
+		}
+	}
+	if (0 > gamer->hp) {
+		gamer->hp = 0;
 	}
 }
 
