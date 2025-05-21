@@ -157,10 +157,8 @@ void en_init(
 			ent->height = enemy_len;
 			ent->hp = EN_ENEMY_HP;
 		}
-		ent->xpos = ((ent->xmin > ent->xpos)? ent->xmin : ent->xpos);
-		ent->xpos = ((ent->xmax < ent->xpos)? ent->xmax : ent->xpos);
-		ent->ypos = ((ent->ymin > ent->ypos)? ent->ymin : ent->ypos);
-		ent->ypos = ((ent->ymax < ent->ypos)? ent->ymax : ent->ypos);
+		ent->xpos = en_clamp(ent->xpos, ent->xmin, ent->xmax);
+		ent->ypos = en_clamp(ent->ypos, ent->ymin, ent->ymax);
 	}
 	en_fix_overlap(entities, num_entities);
 	for (int i = 0; i != num_entities; ++i) {
