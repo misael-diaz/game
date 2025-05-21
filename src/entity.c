@@ -18,11 +18,13 @@ static double en_clamp(
 		_max = min;
 		_min = max;
 	}
+	double ret = val;
 	if (_min > val) {
-		return _min;
+		ret = _min;
 	} else if (_max < val) {
-		return _max;
+		ret = _max;
 	}
+	return ret;
 }
 
 static void en_fix_overlap(
