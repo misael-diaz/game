@@ -1,6 +1,15 @@
 #ifndef LLGLGD_SYSTEM_H
 #define LLGLGD_SYSTEM_H
 
+#include <time.h>
+
+void sys_init_random(void);
+
+double sys_random(
+		double const min,
+		double const max
+);
+
 double sys_etime(
                 struct timespec const * const tep,
                 struct timespec const * const tsp

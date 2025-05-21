@@ -20,6 +20,7 @@ all: $(BIN)
 
 $(ENTITY_OBJ): \
 	$(GMDEFS_H) \
+	$(SYSTEM_H) \
 	$(ENTITY_H) \
 	$(ENTITY_SRC)
 	$(CC) $(CCOPT) -c $(ENTITY_SRC) -o $(ENTITY_OBJ)

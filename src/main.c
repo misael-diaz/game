@@ -1,6 +1,7 @@
 #include <linux/fb.h>
 #include <unistd.h>
 #include <termios.h>
+#include "system.h"
 #include "input.h"
 #include "video.h"
 #include "entity.h"
@@ -37,6 +38,7 @@ int main ()
 			ffsp,
 			framebuffer_fd
 	);
+	sys_init_random();
 	en_init(
 			ents,
 			fvsp,

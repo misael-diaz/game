@@ -1,6 +1,28 @@
+#include <stdlib.h>
 #include <time.h>
 #include "gmdefs.h"
 #include "system.h"
+
+void sys_init_random(void)
+{
+	long const t = time(NULL);
+	long const mask = ((1L << 32) - 1L);
+	long const lo = (t & mask);
+	long const hi = ((t >> 32) & mask);
+	unsigned int const seed = (hi ^ lo);
+	unsigned int const s = (seed)? seed : (mask >> 1);
+	srandom(s);
+}
+
+double sys_random(
+		double const min,
+		double const max
+)
+{
+	double const rand_max_inv = (1.0 / RAND_MAX);
+	double const r = min + (max - min) * (random() * rand_max_inv);
+	return r;
+}
 
 double sys_etime(
 		struct timespec const * const tep,
