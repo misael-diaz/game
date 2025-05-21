@@ -32,7 +32,7 @@ static void en_fix_overlap(
 {
 	for (int i = 0; i != num_entities; ++i) {
 		struct entity const * const entity = &entities[i];
-		if ((EN_GAMER != entity->tag) || (EN_ENEMY != entity->tag)) {
+		if ((EN_GAMER != entity->tag) && (EN_ENEMY != entity->tag)) {
 			continue;
 		}
 		double const x1 = (entity->xpos + entity->width);
