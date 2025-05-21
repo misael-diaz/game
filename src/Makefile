@@ -66,7 +66,8 @@ $(BIN): $(MAIN_OBJ)
 		$(GAME_OBJ) \
 		$(MAIN_OBJ) \
 		-o \
-		$(BIN)
+		$(BIN) \
+		$(LIBS)
 clean:
 	rm -f ../obj/*.o
 	rm -f $(BIN)

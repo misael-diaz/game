@@ -23,3 +23,5 @@ CCOPT = -std=gnu99 \
 	-Wextra \
 	-Wformat \
 	-O0
+
+LIBS = -lm

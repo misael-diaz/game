@@ -2,8 +2,51 @@
 #include <stdlib.h>
 #include <linux/fb.h>
 #include <time.h>
+#include <math.h>
 #include "system.h"
 #include "entity.h"
+
+static void en_fix_overlap(
+		struct entity * const entities,
+		int num_entities
+)
+{
+	for (int i = 0; i != num_entities; ++i) {
+		struct entity const * const entity = &entities[i];
+		if ((EN_GAMER != entity->tag) || (EN_ENEMY != entity->tag)) {
+			continue;
+		}
+		double const x1 = (entity->xpos + entity->width);
+		double const y1 = (entity->ypos + entity->height);
+		for (int j = 0; j != num_entities; ++j) {
+			struct entity * const other = &entities[j];
+			if (EN_ENEMY != other->tag) {
+				continue;
+			}
+			if (other == entity) {
+				continue;
+			}
+			double const x2 = (other->xpos + other->width);
+			double const y2 = (other->ypos + other->height);
+			double const r2 = (
+					(x2 - x1) * (x2 - x1) +
+					(y2 - y1) * (y2 - y1)
+			);
+			double const contact = (entity->len - other->len);
+			double const contact2 = (contact * contact);
+			if (contact2 > r2) {
+				double const r = sqrt(r2);
+				double const r_inv = (1.0 / r);
+				double const correction = (2.0 * r);
+				double const c = correction;
+				double const x2_new = x2 + c * (x2 - x1) * r_inv;
+				double const y2_new = y2 + c * (y2 - y1) * r_inv;
+				other->xpos = x2_new;
+				other->ypos = y2_new;
+			}
+		}
+	}
+}
 
 void en_init(
 		struct entity * const entities,
@@ -96,6 +139,7 @@ void en_init(
 		ent->ypos = ((ent->ymin > ent->ypos)? ent->ymin : ent->ypos);
 		ent->ypos = ((ent->ymax < ent->ypos)? ent->ymax : ent->ypos);
 	}
+	en_fix_overlap(entities, num_entities);
 }
 
 // returns the squared contact-distance between a pair of entities
