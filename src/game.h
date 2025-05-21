@@ -5,6 +5,7 @@
 #include "entity.h"
 
 void g_loop (
+		void ** const fb,
 		void ** const map,
 		struct fb_fix_screeninfo const * const ffsp,
 		struct fb_var_screeninfo const * const fvsp,

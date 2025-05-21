@@ -38,6 +38,7 @@ void vid_munmap_fb(
 );
 
 void vid_write_fb(
+		void ** const fb,
 		void ** const map,
 		struct fb_fix_screeninfo const * const ffsp,
 		struct fb_var_screeninfo const * const fvsp,

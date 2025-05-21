@@ -13,8 +13,8 @@
 # as published by the Free Software Foundation.
 #
 
-CC = clang-12
 CC = gcc
+CC = clang-12
 
 CCOPT = -std=gnu99 \
 	-DDEBUG=0 \
@@ -23,5 +23,10 @@ CCOPT = -std=gnu99 \
 	-Wextra \
 	-Wformat \
 	-O0
+
+CCOPT = -std=gnu99 \
+	-ftree-vectorize \
+	-mavx2 \
+	-O2 \
 
 LIBS = -lm

@@ -1,5 +1,9 @@
 #include <linux/fb.h>
 #include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 #include <termios.h>
 #include "system.h"
 #include "input.h"
@@ -39,6 +43,13 @@ int main ()
 			framebuffer_fd
 	);
 	sys_init_random();
+	errno = 0;
+	void *fb = malloc(ffsp->smem_len);
+	if (!fb) {
+		fprintf(stderr, "main: %s\n", strerror(errno));
+		vid_munmap_fb(&map, ffsp);
+		_exit(EXIT_FAILURE);
+	}
 	en_init(
 			ents,
 			fvsp,
@@ -46,6 +57,7 @@ int main ()
 	);
 	init_term(tp);
 	g_loop(
+			&fb,
 			&map,
 			ffsp,
 			fvsp,
@@ -59,6 +71,8 @@ int main ()
 			&map,
 			ffsp
 	);
+	free(fb);
+	fb = NULL;
 	tcsetattr(
 			STDIN_FILENO,
 			TCSAFLUSH,

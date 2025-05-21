@@ -9,6 +9,7 @@
 #include "game.h"
 
 void g_loop (
+		void ** const fb,
 		void ** const map,
 		struct fb_fix_screeninfo const * const ffsp,
 		struct fb_var_screeninfo const * const fvsp,
@@ -44,6 +45,7 @@ void g_loop (
 	time_game_reference = *tsp;
 	while (1) {
 		vid_write_fb(
+				fb,
 				map,
 				ffsp,
 				fvsp,

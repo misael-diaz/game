@@ -185,6 +185,7 @@ void vid_munmap_fb(
 }
 
 void vid_write_fb(
+		void ** const fb,
 		void ** const map,
 		struct fb_fix_screeninfo const * const ffsp,
 		struct fb_var_screeninfo const * const fvsp,
@@ -196,13 +197,25 @@ void vid_write_fb(
 	int xend = 0;
 	int ybeg = 0;
 	int yend = 0;
+	_Static_assert(
+			sizeof(struct rgba) == sizeof(int),
+			"vid_write_fb: RGBASizeError\n"
+	);
 	int const bytes_per_pixel = (fvsp->bits_per_pixel >> 3);
 	int const bpp = bytes_per_pixel;
 	int const num_pixels = (ffsp->smem_len / bpp);
 	int const num_pixels_x = fvsp->xres;
 	int const num_pixels_y = fvsp->yres;
-	struct rgba * const pix = *map;
-	memset(*map, 0, ffsp->smem_len);
+	int * const ipix = *fb;
+	int * const imappix = *map;
+	struct rgba * const pix = *fb;
+	struct rgba * const mappix = *map;
+	for (int i = 0; i != num_pixels; ++i) {
+		ipix[i] = 0;
+	}
+	for (int i = 0; i != num_pixels; ++i) {
+		imappix[i] = 0;
+	}
 	for (int i = 0; i != num_entities; ++i) {
 		struct entity const * const ent = &entities[i];
 		if (EN_HUD == ent->tag) {
@@ -225,6 +238,9 @@ void vid_write_fb(
 				pix[of].alpha = ent->alpha;
 			}
 		}
+	}
+	for (int i = 0; i != num_pixels; ++i) {
+		mappix[i] = pix[i];
 	}
 }
 
