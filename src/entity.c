@@ -58,10 +58,12 @@ static void en_fix_overlap(
 				double const r_inv = (1.0 / r);
 				double const correction = (2.0 * r);
 				double const c = correction;
-				double const x2_new = x2 + c * (x2 - x1) * r_inv;
-				double const y2_new = y2 + c * (y2 - y1) * r_inv;
-				other->xpos = x2_new;
-				other->ypos = y2_new;
+				double const x2_new = x1 + c * (x2 - x1) * r_inv;
+				double const y2_new = y1 + c * (y2 - y1) * r_inv;
+				double const xpos_new = (x2_new - entity->width);
+				double const ypos_new = (y2_new - entity->height);
+				other->xpos = xpos_new;
+				other->ypos = ypos_new;
 			}
 		}
 	}
