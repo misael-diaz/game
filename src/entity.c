@@ -6,6 +6,25 @@
 #include "system.h"
 #include "entity.h"
 
+static double en_clamp(
+		double const val,
+		double const min,
+		double const max
+)
+{
+	double _min = min;
+	double _max = max;
+	if (max < min) {
+		_max = min;
+		_min = max;
+	}
+	if (_min > val) {
+		return _min;
+	} else if (_max < val) {
+		return _max;
+	}
+}
+
 static void en_fix_overlap(
 		struct entity * const entities,
 		int num_entities
@@ -140,6 +159,11 @@ void en_init(
 		ent->ypos = ((ent->ymax < ent->ypos)? ent->ymax : ent->ypos);
 	}
 	en_fix_overlap(entities, num_entities);
+	for (int i = 0; i != num_entities; ++i) {
+		struct entity * const ent = &entities[i];
+		ent->xpos = en_clamp(ent->xpos, 0, xres);
+		ent->ypos = en_clamp(ent->ypos, 0, yres);
+	}
 }
 
 // returns the squared contact-distance between a pair of entities
