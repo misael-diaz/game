@@ -15,6 +15,9 @@ I am adding references to the source code to keep track of the resources that
 I have found to be most useful to me. In the end, what I want is not to build a game
 but to learn more about low-level programming and GNU/Linux by trying to build a game.
 
+The game has been inspired by this [Let's Build a Game Tutorial Series in Java](https://www.youtube.com/watch?v=1gir2R7G9ws&list=PLWms45O3n--6TvZmtFHaCWRZwEqnz2MHa). Great place
+to start if you are new to game development.
+
 ## Compile
 
 ```
