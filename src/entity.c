@@ -144,6 +144,10 @@ void en_init(
 			ent->ypos = sys_random(0, yres);
 			ent->xvel = sys_random(-EN_ENEMY_VEL, EN_ENEMY_VEL);
 			ent->yvel = sys_random(-EN_ENEMY_VEL, EN_ENEMY_VEL);
+			ent->xvel = en_clamp(ent->xvel,-EN_ENEMY_MAXVEL,-EN_ENEMY_MINVEL);
+			ent->xvel = en_clamp(ent->xvel, EN_ENEMY_MINVEL, EN_ENEMY_MAXVEL);
+			ent->yvel = en_clamp(ent->yvel,-EN_ENEMY_MAXVEL,-EN_ENEMY_MINVEL);
+			ent->yvel = en_clamp(ent->yvel, EN_ENEMY_MINVEL, EN_ENEMY_MAXVEL);
 			ent->xmin = 0;
 			ent->ymin = 0;
 			ent->xmax = (xres - enemy_len);
