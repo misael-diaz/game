@@ -36,15 +36,13 @@ double sys_etime(
 }
 
 void sys_delay(
-		clockid_t const * const clockidp
+		clockid_t const * const clockidp,
+		struct timespec const * const time
 )
 {
-	struct timespec ts = {};
-	struct timespec * const tsp = &ts;
 	clockid_t const clockid = *clockidp;
-	clock_gettime(clockid, tsp);
-	time_t const sec = tsp->tv_sec;
-	long const nsec = (tsp->tv_nsec + GAME_PERIOD_NS);
+	time_t const sec = time->tv_sec;
+	long const nsec = (time->tv_nsec + GAME_PERIOD_NS);
 	struct timespec ts_walltime;
 	struct timespec *twp = &ts_walltime;
 	if (nsec > 999999999L) {

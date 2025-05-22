@@ -31,6 +31,7 @@ void g_loop (
 	struct timespec te = {};
 	struct timespec *tsp = &ts;
 	struct timespec *tep = &te;
+	struct timespec time_game_cycle = {};
 	struct timespec time_game_reference = {};
 	struct timespec time_game_current = {};
 	struct input_event ie = {};
@@ -44,6 +45,10 @@ void g_loop (
 	);
 	time_game_reference = *tsp;
 	while (1) {
+		clock_gettime(
+				clockid,
+				&time_game_cycle
+		);
 		vid_write_fb(
 				fb,
 				map,
@@ -90,7 +95,7 @@ void g_loop (
 			time_game_reference = time_game_current;
 		}
 
-		sys_delay(cip);
+		sys_delay(cip, &time_game_cycle);
 		++count;
 		if (max_count == count) {
 			clock_gettime(

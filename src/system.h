@@ -16,7 +16,8 @@ double sys_etime(
 );
 
 void sys_delay(
-                clockid_t const * const clockidp
+                clockid_t const * const clockidp,
+                struct timespec const * const time
 );
 
 #endif
